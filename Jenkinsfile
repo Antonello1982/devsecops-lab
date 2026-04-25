@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     stages {
-
         stage('Prepare') {
             steps {
                 echo 'Preparando entorno...'
@@ -11,7 +10,8 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'python3 -m pip install -r requirements.txt'
+                // Se agrega la bandera para permitir la instalación en el Python del sistema
+                sh 'python3 -m pip install --break-system-packages -r requirements.txt'
             }
         }
 
@@ -23,6 +23,7 @@ pipeline {
 
         stage('Security Scan') {
             steps {
+                // Bandit analizará tu código en busca de vulnerabilidades
                 sh 'python3 -m bandit -r . || exit 0'
             }
         }
@@ -35,7 +36,9 @@ pipeline {
 
         stage('Deploy Container') {
             steps {
-                sh 'docker run -d -p 5000:5000 devsecops-app'
+                // Detenemos cualquier contenedor previo para evitar conflicto de puertos
+                sh 'docker rm -f devsecops-app || true'
+                sh 'docker run -d --name devsecops-app -p 5000:5000 devsecops-app'
             }
         }
     }
