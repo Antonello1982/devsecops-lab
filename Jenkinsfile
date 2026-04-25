@@ -11,19 +11,19 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'py -m pip install -r requirements.txt'
+                bat 'python3 -m pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'py -m pytest'
+                bat 'python3 -m pytest'
             }
         }
 
         stage('Security Scan') {
             steps {
-                bat 'py -m bandit -r . || exit 0'
+                bat 'python3 -m bandit -r . || exit 0'
             }
         }
 
